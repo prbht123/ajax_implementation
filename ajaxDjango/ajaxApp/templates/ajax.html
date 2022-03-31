@@ -1,0 +1,107 @@
+<script>
+    //insert data in deb
+$('#btnsave').click(function(){
+    output=''
+let id = $('#sid').val();
+let nm= $('#nameid').val();
+let em= $('#emailid').val();
+let pw= $('#passwordid').val();
+let crf = $('input[name=csrfmiddlewaretoken]').val();
+
+if(nm==''){
+    console.log("please enter name");
+}
+else if(em==''){
+    console.log("please enter email");
+}
+else if(pw==''){
+    console.log("please enter password");
+}
+else{
+    mydata={
+        'sid':id,
+        'name':nm,
+        'email':em,
+        'password':pw,
+        'csrfmiddlewaretoken':crf
+    };
+    $.ajax({
+        url:"{% url 'save' %}",
+        method:"POST",
+        data:mydata,
+        success:function(data){
+            x=data.detail;
+            if(data.status == 'save'){
+                $("form")[0].reset();
+                for(i=0;i<x.length;i++){
+                    output += "<tr><td>" + x[i].id +"</td><td>"+x[i].name+"</td><td>" + x[i].email +"</td><td>"+ x[i].password +'</td><td><input class="btn btn-warning btn-sm btn-edit" type="button" value="Edit" data-sid='+x[i].id+'> <input class="btn btn-danger btn-sm btn-del" type="button" value="Delete" data-sid='+ x[i].id +'>';
+                }
+                
+                $('#tbodyid').html(output);
+            }
+            $('#msg').text(data.msg);
+            $('#msg').show();
+         },
+    });
+}
+});
+
+
+//Delete data in db 
+$("#tbodyid").on("click",".btn-del",function(){
+   console.log("deleted that id");
+   let id=$(this).attr("data-sid");
+   let crf = $('input[name=csrfmiddlewaretoken]').val();
+   console.log(id);
+   mythis=this;
+   mydata={
+       'sid':id,
+       'csrfmiddlewaretoken':crf
+   }
+
+   $.ajax({
+    url:"{% url 'delete' %}",
+        method:"POST",
+        data:mydata,
+        success:function(data){
+            x=data.detail;
+            if(data.status == 'delete'){
+                $(mythis).closest("tr").fadeOut();
+                console.log("successfully deleted")
+                $('#msg').text("successfully deleted the data of user : "+ data.name);
+                $('#msg').show()
+            }
+            else{
+                console.log("unable to delete");
+            }
+            
+        }
+   });
+});
+
+
+/// edit the data n db
+$('#tbodyid').on("click",".btn-edit",function(){
+    $('#msg').hide()
+    console.log("edit the page")
+    let id=$(this).attr("data-sid");
+    let crf = $('input[name=csrfmiddlewaretoken]').val();
+    console.log(id);
+    mydata={
+        'sid':id,
+        'csrfmiddlewaretoken':crf
+    }
+    $.ajax({
+    url:"{% url 'edit' %}",
+        method:"POST",
+        data:mydata,
+        success:function(data){
+          console.log(data.detail);
+            $('#sid').val(data.detail.id);
+            $('#nameid').val(data.detail.name);
+            $('#emailid').val(data.detail.email);
+            $('#passwordid').val(data.detail.password);
+        }
+   });
+});
+</script>

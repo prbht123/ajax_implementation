@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}
+Register
+{% endblock %}
+{% block jsscript %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center alert alert-danger">
+        Django Function Based View Ajax CRUD Project
+
+    </h1>
+    <div class="row">
+     <div class="col-sm-4">
+         <h4 class="text-center alert alert-info">Add/Update User</h4>
+        <form action="" method="post" id="form_id">
+            {% csrf_token %}
+            <input type="hidden" id="sid" />
+            {{form.as_p}}
+            <input type="button" class="btn btn-success" id="btnsave" value="Save"/><br><br>
+            <div id="msg" style="display: none;" class="alert alert-danger"></div>
+        </form>
+     </div>
+     <div class="col-sm-8">
+        <h4 class="text-center alert alert-info">Show Users</h4>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Id </th>
+                    <th scope="col">Name </th>
+                    <th scope="col">Email </th>
+                    <th scope="col">Password </th>
+                    <th scope="col">Action </th>
+                </tr>
+            </thead>
+            <tbody id="tbodyid">
+                {% for user in users %}
+                <tr>
+                    <td>{{user.id}}</td>
+                    <td>{{user.name}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.password}}</td>
+
+                    <td>
+                        <input class="btn btn-warning btn-sm btn-edit" type="button" data-sid="{{user.id}}" value="Edit">
+                        <input class="btn btn-danger btn-sm btn-del" type="button" data-sid="{{user.id}}" value="Delete">
+                    </td>
+                    
+                </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+     </div>
+ </div>
+</div>
+
+{% include 'ajax.html' %}
+
+{% endblock %}
